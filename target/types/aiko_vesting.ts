@@ -1,0 +1,653 @@
+export type AikoVesting = {
+  "version": "0.1.0",
+  "name": "aiko_vesting",
+  "instructions": [
+    {
+      "name": "initialize",
+      "accounts": [
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "updateGlobalState",
+      "accounts": [
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        },
+        {
+          "name": "newAdmin",
+          "type": {
+            "option": "publicKey"
+          }
+        },
+        {
+          "name": "activeState",
+          "type": {
+            "option": "u64"
+          }
+        }
+      ]
+    },
+    {
+      "name": "addToWhitelist",
+      "accounts": [
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        },
+        {
+          "name": "address",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "removeFromWhitelist",
+      "accounts": [
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        },
+        {
+          "name": "address",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "transferFreezeAuthority",
+      "accounts": [
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "vestingToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "newAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "freezeTokenAccount",
+      "accounts": [
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vestingToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "thawTokenAccount",
+      "accounts": [
+        {
+          "name": "applicant",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vestingToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "transferWithUnlock",
+      "accounts": [
+        {
+          "name": "applicant",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vestingToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "destTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "globalInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "publicKey"
+          },
+          {
+            "name": "whitelistedCount",
+            "type": "u64"
+          },
+          {
+            "name": "whitelist",
+            "type": {
+              "array": [
+                "publicKey",
+                30
+              ]
+            }
+          },
+          {
+            "name": "active",
+            "type": "u64"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Uninitialized",
+      "msg": "Uninitialized account"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidSuperOwner",
+      "msg": "Invalid Super Owner"
+    },
+    {
+      "code": 6002,
+      "name": "VestingDeactived",
+      "msg": "Vesting is deactived. Allowed for all thaw and transfer action."
+    },
+    {
+      "code": 6003,
+      "name": "InvalidWhitelistAddress",
+      "msg": "Invalid Whitelist Address"
+    },
+    {
+      "code": 6004,
+      "name": "NotAllowedApplicant",
+      "msg": "The Applicant Not Allowed In Whitelist"
+    }
+  ]
+};
+
+export const IDL: AikoVesting = {
+  "version": "0.1.0",
+  "name": "aiko_vesting",
+  "instructions": [
+    {
+      "name": "initialize",
+      "accounts": [
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "updateGlobalState",
+      "accounts": [
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        },
+        {
+          "name": "newAdmin",
+          "type": {
+            "option": "publicKey"
+          }
+        },
+        {
+          "name": "activeState",
+          "type": {
+            "option": "u64"
+          }
+        }
+      ]
+    },
+    {
+      "name": "addToWhitelist",
+      "accounts": [
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        },
+        {
+          "name": "address",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "removeFromWhitelist",
+      "accounts": [
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        },
+        {
+          "name": "address",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "transferFreezeAuthority",
+      "accounts": [
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "vestingToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "newAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "freezeTokenAccount",
+      "accounts": [
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vestingToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "thawTokenAccount",
+      "accounts": [
+        {
+          "name": "applicant",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vestingToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "transferWithUnlock",
+      "accounts": [
+        {
+          "name": "applicant",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vestingToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "destTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "globalBump",
+          "type": "u8"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "globalInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "publicKey"
+          },
+          {
+            "name": "whitelistedCount",
+            "type": "u64"
+          },
+          {
+            "name": "whitelist",
+            "type": {
+              "array": [
+                "publicKey",
+                30
+              ]
+            }
+          },
+          {
+            "name": "active",
+            "type": "u64"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Uninitialized",
+      "msg": "Uninitialized account"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidSuperOwner",
+      "msg": "Invalid Super Owner"
+    },
+    {
+      "code": 6002,
+      "name": "VestingDeactived",
+      "msg": "Vesting is deactived. Allowed for all thaw and transfer action."
+    },
+    {
+      "code": 6003,
+      "name": "InvalidWhitelistAddress",
+      "msg": "Invalid Whitelist Address"
+    },
+    {
+      "code": 6004,
+      "name": "NotAllowedApplicant",
+      "msg": "The Applicant Not Allowed In Whitelist"
+    }
+  ]
+};
