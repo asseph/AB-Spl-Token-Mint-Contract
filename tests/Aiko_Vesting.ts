@@ -8,7 +8,6 @@ import {
 import { ASSOCIATED_TOKEN_PROGRAM_ID, MintLayout, Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { AikoVesting } from '../target/types/aiko_vesting';
 import fs from 'fs';
-
 const GLOBAL_AUTHORITY_SEED = "global-authority";
 const VESTING_TOKEN_MINT = new PublicKey("CFt8zQNRUpK4Lxhgv64JgZ5giZ3VWXSceQr6yKh7VoFU");
 
