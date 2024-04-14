@@ -11,6 +11,7 @@ import fs from 'fs';
 const GLOBAL_AUTHORITY_SEED = "global-authority";
 const VESTING_TOKEN_MINT = new PublicKey("CFt8zQNRUpK4Lxhgv64JgZ5giZ3VWXSceQr6yKh7VoFU");
 
+
 anchor.setProvider(anchor.Provider.env());
 const provider = anchor.getProvider();
 const program = anchor.workspace.AikoVesting as Program<AikoVesting>;
